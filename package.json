@@ -1,0 +1,14 @@
+{
+  "name": "a-little-forever-wedding-invitation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An editable, accessible wedding invitation with no application dependencies.",
+  "scripts": {
+    "dev": "node tools/serve.mjs",
+    "build": "node tools/build.mjs",
+    "check": "node tools/check.mjs",
+    "test": "node --test tools/test-calendar.mjs",
+    "metadata": "node tools/sync-metadata.mjs"
+  },
+  "engines": { "node": ">=18" }
+}
