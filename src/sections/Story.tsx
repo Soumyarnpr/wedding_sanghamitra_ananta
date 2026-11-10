@@ -29,7 +29,7 @@ export function Story({ motion }: { motion: boolean }) {
     const media = gsap.matchMedia();
     media.add('(min-height: 591px)', () => {
       scroll.current = ScrollTrigger.create({
-        trigger: track.current, start: 'top 14px', end: '+=' + runway,
+        trigger: track.current, start: 'top top', end: '+=' + runway,
         onUpdate: ({ progress }) => setActive(Math.round(progress * last)),
       });
       return () => { scroll.current = null; };
@@ -97,32 +97,33 @@ export function Story({ motion }: { motion: boolean }) {
     </div>
     {photos.length > 0 && <div className={'album-track' + (motion && runway ? ' has-scroll' : '')} ref={track}
       style={motion && runway ? { '--album-runway': runway + 'px' } as CSSProperties : undefined}>
-      <div className="album-spread content-width" onKeyDown={onAlbumKeyDown}>
-        <div className="album-copy">
-          <p className="kicker">{gallery.length ? 'MEMORIES IN PRINT' : story.illustrationNote}</p>
-          <h3>{story.albumTitle}</h3>
-          <Flourish />
-          <p>{last > 0 ? 'Turn the cards to see the collection.' : 'A keepsake for the occasion.'}</p>
-          <div className="album-controls">
-            <button type="button" className="icon-button" onClick={() => turn(active - 1)} disabled={!active} aria-label="Previous album card"><ArrowLeft size={19}/></button>
-            <span aria-live="polite" className="album-index">{String(active + 1).padStart(2, '0')} <i>/</i> {String(photos.length).padStart(2, '0')}</span>
-            <button type="button" className="icon-button" onClick={() => turn(active + 1)} disabled={active === last} aria-label="Next album card"><ArrowRight size={19}/></button>
+      <div className="album-pin">
+        <div className="album-spread content-width" onKeyDown={onAlbumKeyDown}>
+          <div className="album-copy">
+            <p className="kicker">{gallery.length ? 'MEMORIES IN PRINT' : story.illustrationNote}</p>
+            <h3>{story.albumTitle}</h3>
+            <Flourish />
+            <p>{last > 0 ? 'Turn the cards to see the collection.' : 'A keepsake for the occasion.'}</p>
+            <div className="album-controls">
+              <button type="button" className="icon-button" onClick={() => turn(active - 1)} disabled={!active} aria-label="Previous album card"><ArrowLeft size={19}/></button>
+              <span aria-live="polite" className="album-index">{String(active + 1).padStart(2, '0')} <i>/</i> {String(photos.length).padStart(2, '0')}</span>
+              <button type="button" className="icon-button" onClick={() => turn(active + 1)} disabled={active === last} aria-label="Next album card"><ArrowRight size={19}/></button>
+            </div>
           </div>
-        </div>
-        <div className="album-stage" ref={stage} role="group" aria-label="Wedding album cards" tabIndex={last > 0 ? 0 : undefined}
-          onPointerDown={startSwipe} onPointerUp={endSwipe} onPointerCancel={cancelSwipe} onLostPointerCapture={cancelSwipe}>
-          {photos.map((photo, index) => {
-            const depth = active - index;
-            return <figure key={photo.src + index} className={'album-card ' + (depth === 0 ? 'is-top' : 'is-under')}
-              hidden={depth < 0 || depth > 3} aria-hidden={depth !== 0}
-              style={{ zIndex: index + 1, translate: depth ? (depth * 7) + 'px ' + (depth * -5) + 'px' : undefined, rotate: depth ? (depth % 2 ? 1 : -1) * (6 + depth) + 'deg' : undefined }}>
-              <Picture src={photo.src} alt={photo.alt} />
-              <figcaption>{photo.caption}</figcaption>
-            </figure>;
-          })}
+          <div className="album-stage" ref={stage} role="group" aria-label="Wedding album cards" tabIndex={last > 0 ? 0 : undefined}
+            onPointerDown={startSwipe} onPointerUp={endSwipe} onPointerCancel={cancelSwipe} onLostPointerCapture={cancelSwipe}>
+            {photos.map((photo, index) => {
+              const depth = active - index;
+              return <figure key={photo.src + index} className={'album-card ' + (depth === 0 ? 'is-top' : 'is-under')}
+                hidden={depth < 0 || depth > 3} aria-hidden={depth !== 0}
+                style={{ zIndex: index + 1, translate: depth ? (depth * 7) + 'px ' + (depth * -5) + 'px' : undefined, rotate: depth ? (depth % 2 ? 1 : -1) * (6 + depth) + 'deg' : undefined }}>
+                <Picture src={photo.src} alt={photo.alt} />
+                <figcaption>{photo.caption}</figcaption>
+              </figure>;
+            })}
+          </div>
         </div>
       </div>
     </div>}
   </section>;
 }
-
