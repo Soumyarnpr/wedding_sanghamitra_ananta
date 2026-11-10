@@ -1,0 +1,91 @@
+{
+  "couple": {
+    "bride": { "name": "Sanghamitra", "nickname": "Chandini", "image": "", "alt": "", "family": "Eldest daughter of Smt. Laxmipriya Sahoo and Sri Baburam Sahoo" },
+    "groom": { "name": "Ananta", "nickname": "Manu", "image": "", "alt": "", "family": "Youngest son of Smt. Kabita Pradhan and Sri Arakhita Pradhan of Rasakadapur, Erasama, Jagatsinghpur" }
+  },
+  "welcome": {
+    "eyebrow": "A WEDDING INVITATION",
+    "odia": "ଶୁଭ ବିବାହ",
+    "message": "Together with our families, we invite you to celebrate our wedding and bless us as we begin our life together.",
+    "invocation": "ॐ श्री गणेशाय नमः",
+    "shloka": "वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ ।\nनिर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥",
+    "translation": "O Lord with the curved trunk and mighty form, radiant as a million suns, please remove all obstacles from my endeavors, always."
+  },
+  "wedding": {
+    "date": "2026-12-02",
+    "timezone": "Asia/Kolkata",
+    "startTime": "",
+    "endTime": "",
+    "countdown": { "enabled": true, "time": "", "expiredText": "The wedding day has arrived." },
+    "venue": {
+      "name": "BMC Kalyan Mandap",
+      "address": "Chandrasekharpur, Bhubaneswar",
+      "mapsUrl": "",
+      "mapsPlaceId": "",
+      "image": "",
+      "imageAlt": "",
+      "travel": ""
+    }
+  },
+  "story": {
+    "title": "Two names. One beginning.",
+    "text": "",
+    "intro": "Known to those closest to them as Chandini and Manu, Sanghamitra and Ananta invite you to share the first page of their married life.",
+    "albumTitle": "The wedding album",
+    "illustrationNote": "Illustrated wedding keepsakes",
+    "illustrations": [
+      { "src": "/assets/album-lotus.webp", "alt": "Pink lotus on maroon", "caption": "A lotus in bloom" },
+      { "src": "/assets/album-diya.webp", "alt": "Oil lamp glowing against saffron", "caption": "The light of a diya" },
+      { "src": "/assets/album-kalash.webp", "alt": "Copper kalash with a coconut and mango leaves", "caption": "An auspicious welcome" },
+      { "src": "/assets/album-marigold.webp", "alt": "Orange marigolds on red", "caption": "Marigolds for the celebration" },
+      { "src": "/assets/album-temple.webp", "alt": "Carved sandstone temple arch", "caption": "Carved in sandstone" },
+      { "src": "/assets/album-garlands.webp", "alt": "Cream and pink flower garlands", "caption": "Garlands for the day" }
+    ]
+  },
+  "gallery": [],
+  "events": [
+    { "id": "mangalkrutya", "name": "Mangalkrutya", "subtitle": "Auspicious beginnings", "date": "2026-12-01", "startTime": "", "endTime": "", "venue": "", "theme": "saffron", "illustration": "kalash", "description": "The pre-wedding observance opens the celebrations.", "significance": "Pre-wedding observances mark an auspicious beginning and offer a time for families to seek blessings for the marriage." },
+    { "id": "marriage", "name": "Marriage", "subtitle": "The wedding ceremony", "date": "2026-12-02", "startTime": "", "endTime": "", "venue": "", "theme": "rose", "illustration": "mandap", "description": "Join both families in blessing the couple on their wedding day.", "significance": "The wedding ceremony brings the families together as the couple make their commitment to a shared life." },
+    { "id": "panigrahana", "name": "Panigrahana", "subtitle": "The joining of hands", "date": "2026-12-02", "startTime": "", "endTime": "", "venue": "", "theme": "wine", "illustration": "diya", "description": "Panigrahana is part of the wedding-day ceremonies.", "significance": "In Panigrahana, the taking of the hand symbolizes the couple’s commitment as they enter married life." },
+    { "id": "reception", "name": "Reception", "subtitle": "Dinner and celebration", "date": "2026-12-02", "startTime": "19:00", "endTime": "", "venue": "wedding", "theme": "cream", "illustration": "lotus", "description": "Please join both families for dinner and celebration.", "significance": "" }
+  ],
+  "calendar": {
+    "enabled": true,
+    "title": "",
+    "description": "We would be delighted to celebrate our wedding with you.",
+    "reminders": [
+      { "daysBefore": 2, "time": "17:00" },
+      { "daysBefore": 0, "time": "17:00" }
+    ]
+  },
+  "rsvp": {
+    "enabled": true,
+    "message": "Please let our family know if you’ll be joining us. We look forward to celebrating with you.",
+    "sheetUrl": "",
+    "formUrl": "",
+    "endpoint": "",
+    "maxGuests": 10,
+    "contacts": [
+      { "name": "Smt. Laxmipriya Sahoo", "phone": "+918908650103" },
+      { "name": "Sri Baburam Sahoo", "phone": "+919817943397" }
+    ]
+  },
+  "music": { "enabled": true, "src": "/assets/bg-music.mp3", "autoplay": true, "volume": 0.55 },
+  "artwork": { "hero": "/assets/hero.webp", "ganesha": "/assets/ganesha.svg", "venue": "/assets/album-temple.webp", "lotus": "/assets/lotus.svg", "botanical": "/assets/botanical.svg" },
+  "theme": { "maroon": "#310b18", "vermillion": "#8d243d", "rose": "#b76d7b", "gold": "#dcba7c", "ivory": "#fbf3e7", "ink": "#47172a" },
+  "fonts": {
+    "stylesheet": "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Manrope:wght@400;500;600;700&family=Noto+Sans+Oriya:wght@500;600&family=Noto+Serif+Devanagari:wght@500;600&display=swap",
+    "display": "'Cormorant Garamond', Georgia, serif",
+    "body": "'Manrope', system-ui, sans-serif",
+    "odia": "'Noto Sans Oriya', serif",
+    "devanagari": "'Noto Serif Devanagari', serif"
+  },
+  "animation": { "enabled": true, "petals": 24, "mobilePetals": 12, "loaderMaxMs": 1300 },
+  "footer": {
+    "message": "Your presence and blessings will mean so much to us.",
+    "thanks": "With love and gratitude",
+    "compliments": "With best compliments from the Sahoo family, friends and relatives."
+  },
+  "branding": { "advertisementImage": "", "advertisementAlt": "", "portfolioUrl": "", "instagramUrl": "" }
+}
+

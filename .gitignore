@@ -1,12 +1,5 @@
 node_modules/
 dist/
-.sites-runtime/
-.env
-.env.*
-!.env.example
-artifacts/
-archives/
-*.zip
-*.tar
-*.tar.gz
+OLD/
+.env*
 *.log
