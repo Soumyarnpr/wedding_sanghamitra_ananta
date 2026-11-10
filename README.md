@@ -35,7 +35,7 @@ The downloadable iCalendar file contains display alarms for 5:00 p.m. India time
 
 ## RSVP
 
-The app currently offers the two phone contacts on the printed card. To collect responses in Sheets, link a Google Form to your response spreadsheet and put the guest-facing form URL in `rsvp.formUrl`. Put the administrative Sheet URL in `rsvp.sheetUrl` only if it is appropriate for that URL to be in client source. The app uses the form URL for guest submissions. [Google Forms response destinations](https://support.google.com/docs/answer/2917686)
+The RSVP section shows a Google Sheets placeholder and the phone contacts from the printed card. Replace `REPLACE_WITH_RSVP_SHEET_URL` in `rsvp.sheetUrl` with a shared Sheet URL intended for guests. The link opens the Sheet. For guests to submit responses through a form, link a Google Form to your response spreadsheet and put the guest-facing form URL in `rsvp.formUrl`. The form takes precedence over the direct Sheet link. [Google Forms response destinations](https://support.google.com/docs/answer/2917686)
 
 For an inline RSVP form, set `rsvp.endpoint` to an HTTPS endpoint that supports the invitation origin through CORS. It receives a `POST` with a `text/plain` JSON body containing `name`, `attendance` (`yes` or `no`), `guests`, and `submissionId`. Validate on the server, treat the ID as an idempotency key, and return an HTTP success response with `{"ok": true}` only after storing the response. Keep Sheets credentials on the server. The app reports a submission as confirmed only after receiving that acknowledgment.
 

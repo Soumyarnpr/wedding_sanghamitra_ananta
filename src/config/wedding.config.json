@@ -61,7 +61,7 @@
   "rsvp": {
     "enabled": true,
     "message": "Please let our family know if you’ll be joining us. We look forward to celebrating with you.",
-    "sheetUrl": "",
+    "sheetUrl": "REPLACE_WITH_RSVP_SHEET_URL",
     "formUrl": "",
     "endpoint": "",
     "maxGuests": 10,

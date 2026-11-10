@@ -193,6 +193,9 @@ p { line-height: 1.75; }
 .rsvp-section { background: #f2ded7; padding-inline: 20px; }
 .rsvp-card { position: relative; width: min(100%, 760px); margin: auto; padding: clamp(28px, 6vw, 63px) clamp(18px, 5vw, 54px); background: var(--paper); border: 1px solid #d6ad9a; text-align: center; box-shadow: 0 14px 40px #602c3b14; }
 .rsvp-card .section-title { width: 100%; margin-bottom: 23px; }
+.rsvp-placeholder { display: inline-flex; align-items: center; gap: 12px; padding: 10px 17px; border: 1px dashed #b78e7b; text-align: left; }
+.rsvp-placeholder strong, .rsvp-placeholder small { display: block; }
+.rsvp-placeholder small { color: var(--muted); font-size: .75rem; }
 .contact-label { margin: 20px auto 10px; color: var(--vermillion); }
 .contacts { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
 .contact-link { display: flex; gap: 12px; align-items: center; justify-content: center; min-height: 56px; padding: 9px 15px; border: 1px solid #d6ad9a; text-align: left; }
