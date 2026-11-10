@@ -25,12 +25,14 @@ export function Welcome({ motion }: { motion: boolean }) {
         {wedding.venue.address && <p className="hero-location kicker" data-opening>{wedding.venue.address}</p>}
       </div>
     </section>
-    <div className="blessing" data-enter>
-      <p className="odia" lang="or">{welcome.odia}</p>
-      <Flourish />
-      <p className="blessing-meaning">{welcome.translation}</p>
+    <div className="blessing">
+      <div data-enter>
+        <p className="odia" lang="or">{welcome.odia}</p>
+        <Flourish />
+        <p className="blessing-meaning">{welcome.translation}</p>
+      </div>
       <div className="couple-pair">
-        {Object.values(couple).map((person) => <figure key={person.name}>
+        {Object.entries(couple).map(([role, person]) => <figure key={role} data-portrait>
           <div className="couple-portrait">
             {person.image ? <Picture src={person.image} alt={person.alt || person.name} />
               : <span aria-hidden="true">{person.name[0]}</span>}

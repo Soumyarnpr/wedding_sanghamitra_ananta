@@ -13,7 +13,8 @@ export function Picture({ src, alt, fallback = '', eager = false }: { src: strin
     : <div className="picture-fallback" aria-hidden="true"><Motif /></div>;
 }
 
-export function Loader({ onReady }: { onReady: () => void }) {
+export function Loader({ onReady, motion }: { onReady: () => void; motion: boolean }) {
+  const [leaving, setLeaving] = useState(false);
   useEffect(() => {
     let active = true;
     const files = [config.artwork.hero, config.artwork.ganesha].filter(Boolean);
@@ -24,17 +25,22 @@ export function Loader({ onReady }: { onReady: () => void }) {
     });
     const start = performance.now();
     let transition = 0;
+    let remove = 0;
     const finish = () => {
       if (!active) return;
       active = false;
-      transition = window.setTimeout(onReady, Math.max(0, 380 - (performance.now() - start)));
+      transition = window.setTimeout(() => {
+        if (!motion) return onReady();
+        setLeaving(true);
+        remove = window.setTimeout(onReady, 260);
+      }, Math.max(0, 380 - (performance.now() - start)));
     };
     const timer = window.setTimeout(finish, config.animation.loaderMaxMs);
     Promise.allSettled(images.map((image) => image.decode())).then(finish);
-    return () => { active = false; clearTimeout(timer); clearTimeout(transition); };
-  }, [onReady]);
+    return () => { active = false; clearTimeout(timer); clearTimeout(transition); clearTimeout(remove); };
+  }, [onReady, motion]);
 
-  return <div className="loader" role="status">
+  return <div className={'loader' + (motion ? ' has-motion' : '') + (leaving ? ' is-leaving' : '')} role="status">
     <div className="loader-seal"><Motif /></div>
     <div className="loader-monogram">{initials}</div>
     <span>Opening the invitation</span>

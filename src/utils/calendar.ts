@@ -55,22 +55,31 @@ export function googleCalendar() {
   });
 }
 
+function calendarReminders() {
+  const { wedding, calendar } = config;
+  if (!calendar.enabled || !dateValue(wedding.date)) return [];
+  return calendar.reminders.flatMap(({ daysBefore, time }) => {
+    if (!Number.isInteger(daysBefore) || daysBefore < 0) return [];
+    const alarm = zonedTime(shiftDate(wedding.date, -daysBefore), time, wedding.timezone);
+    return alarm ? [alarm] : [];
+  });
+}
+
+export function calendarReminderCount() {
+  return calendarReminders().length;
+}
+
 export function calendarFile() {
   const event = calendarDetails();
   if (!event) return '';
-  const { wedding, calendar } = config;
-  const reminders = calendar.reminders.flatMap(({ daysBefore, time }) => {
-    if (!Number.isInteger(daysBefore) || daysBefore < 0) return [];
-    const alarm = zonedTime(shiftDate(wedding.date, -daysBefore), time, wedding.timezone);
-    return alarm ? [
-      'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER;VALUE=DATE-TIME:' + utcStamp(alarm),
-      'DESCRIPTION:' + escapeText(event.title), 'END:VALARM',
-    ] : [];
-  });
+  const reminders = calendarReminders().flatMap((alarm) => [
+    'BEGIN:VALARM', 'ACTION:DISPLAY', 'TRIGGER;VALUE=DATE-TIME:' + utcStamp(alarm),
+    'DESCRIPTION:' + escapeText(event.title), 'END:VALARM',
+  ]);
   const identity = coupleName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   return [
     'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Wedding Invitation//Calendar//EN', 'CALSCALE:GREGORIAN',
-    'BEGIN:VEVENT', 'UID:' + identity + '-' + wedding.date + '@invitation.local', 'DTSTAMP:' + utcStamp(new Date()),
+    'BEGIN:VEVENT', 'UID:' + identity + '-' + config.wedding.date + '@invitation.local', 'DTSTAMP:' + utcStamp(new Date()),
     'DTSTART' + event.valueType + ':' + event.startValue,
     'DTEND' + event.valueType + ':' + event.endValue,
     'SUMMARY:' + escapeText(event.title), 'DESCRIPTION:' + escapeText(event.description),
@@ -85,6 +94,9 @@ export function downloadCalendar() {
   const link = document.createElement('a');
   link.href = url;
   link.download = 'wedding.ics';
+  link.hidden = true;
+  document.body.append(link);
   link.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

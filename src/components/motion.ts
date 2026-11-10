@@ -27,10 +27,17 @@ export function useInvitationMotion(root: RefObject<HTMLElement | null>, enabled
           scrollTrigger: { trigger: node, start: 'top 91%', once: true },
         });
       });
+      gsap.from('[data-portrait]', {
+        y: 18, opacity: 0, duration: 0.65, stagger: 0.16, ease: 'power2.out',
+        clearProps: 'opacity,transform',
+        scrollTrigger: { trigger: '.couple-pair', start: 'top 88%', once: true },
+      });
       gsap.utils.toArray<HTMLElement>('.event-card').forEach((node) => {
-        gsap.fromTo(node, { '--event-wash': 0.35 }, { '--event-wash': 1, duration: 1,
+        const sequence = gsap.timeline({
           scrollTrigger: { trigger: node, start: 'top 85%', once: true },
         });
+        sequence.from(node.querySelector('.event-wash'), { opacity: 0, scale: 1.13, duration: 1.15 })
+          .from(node.querySelector('.event-symbol'), { y: 10, rotate: -12, duration: 0.7, ease: 'power2.out' }, 0);
       });
 
       gsap.utils.toArray<HTMLElement>('.petal-field i').forEach((petal, index) => {

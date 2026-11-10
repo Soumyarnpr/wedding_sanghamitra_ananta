@@ -43,25 +43,31 @@ export function Ceremonies() {
     <div className="event-grid content-width">
       {config.events.map((event, index) => <article className={'event-card event-' + event.theme} key={event.id} data-enter>
         <div className="event-wash" aria-hidden="true"/>
-        <header>
+        <header className="event-emblem">
           <span className="kicker">{String(index + 1).padStart(2, '0')}</span>
           <div className="event-symbol"><Motif kind={event.illustration}/></div>
         </header>
-        <p className="kicker">{event.subtitle}</p>
-        <h3>{event.name}</h3>
-        <ul className="event-meta">
-          <li><CalendarDays size={16}/><time dateTime={event.date}>{dateLabel(event.date)}</time></li>
-          {eventTime(event) && <li><Clock3 size={16}/><span>{eventTime(event)}</span></li>}
-          {eventVenue(event) && <li><MapPin size={16}/><span>{eventVenue(event)}</span></li>}
-        </ul>
-        <p>{event.description}</p>
-        {event.significance && <aside className="ritual-note"><span className="kicker">THE RITUAL</span><p>{event.significance}</p></aside>}
+        <div className="event-copy">
+          <p className="kicker">{event.subtitle}</p>
+          <h3>{event.name}</h3>
+          <ul className="event-meta">
+            <li><CalendarDays size={16}/><time dateTime={event.date}>{dateLabel(event.date)}</time></li>
+            {eventTime(event) && <li><Clock3 size={16}/><span>{eventTime(event)}</span></li>}
+            {eventVenue(event) && <li><MapPin size={16}/><span>{eventVenue(event)}</span></li>}
+          </ul>
+          <p>{event.description}</p>
+        </div>
+        {event.significance && <aside className="ritual-note">
+          <Motif />
+          <p className="kicker">THE RITUAL</p>
+          <p>{event.significance}</p>
+        </aside>}
       </article>)}
     </div>
   </section>;
 }
 
-export function Summary({ revealed }: { revealed: boolean }) {
+export function Summary() {
   const { wedding, events, welcome } = config;
   return <section id="invitation" className="section summary-section dark" aria-label="Complete wedding invitation">
     <div className="summary-card" data-enter>
@@ -79,7 +85,7 @@ export function Summary({ revealed }: { revealed: boolean }) {
       </dl>
       {venue.name && <p className="summary-location"><strong>{venue.name}</strong><br />{venue.address}</p>}
       <Directions light />
-      {revealed && <Countdown compact />}
+      <Countdown compact />
     </div>
   </section>;
 }

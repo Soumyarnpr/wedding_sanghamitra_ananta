@@ -1,10 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { CalendarDays, Download, Sparkles } from 'lucide-react';
 import gsap from 'gsap';
 import { config } from '../config/wedding';
 import { SectionTitle, Motif } from '../components/ornaments';
 import { dateLabel, timeLabel, zonedTime } from '../utils/dates';
-import { downloadCalendar, googleCalendar } from '../utils/calendar';
+import { calendarReminderCount, downloadCalendar, googleCalendar } from '../utils/calendar';
 
 const width = 720;
 const height = 342;
@@ -12,8 +12,30 @@ const brush = 33;
 const columns = 36;
 const rows = 18;
 
-function ScratchCard({ onReveal, revealed }: { onReveal: () => void; revealed: boolean }) {
+function timezoneLabel(instant: Date, timezone: string) {
+  return new Intl.DateTimeFormat('en-IN', { timeZone: timezone, timeZoneName: 'short' })
+    .formatToParts(instant).find((part) => part.type === 'timeZoneName')?.value ?? timezone;
+}
+
+function revealTimeLabel() {
+  const { wedding, events } = config;
+  const ceremony = zonedTime(wedding.date, wedding.startTime, wedding.timezone);
+  if (ceremony) return timeLabel(wedding.startTime) + ' · ' + timezoneLabel(ceremony, wedding.timezone);
+
+  const reception = events.find((event) => event.id === 'reception' && event.date === wedding.date);
+  if (!reception) return '';
+  const receptionStart = zonedTime(reception.date, reception.startTime, wedding.timezone);
+  if (!receptionStart) return '';
+  const end = timeLabel(reception.endTime);
+  const schedule = timeLabel(reception.startTime) + (end ? ' – ' + end : ' onwards');
+  return reception.name + ' · ' + schedule + ' (' + timezoneLabel(receptionStart, wedding.timezone) + ')';
+}
+
+function ScratchCard({ onReveal, revealed, focusOnReveal, time }: {
+  onReveal: () => void; revealed: boolean; focusOnReveal: boolean; time: string;
+}) {
   const canvas = useRef<HTMLCanvasElement>(null);
+  const result = useRef<HTMLDivElement>(null);
   const last = useRef<{ x: number; y: number } | null>(null);
   const covered = useRef(new Set<number>());
   useLayoutEffect(() => {
@@ -55,6 +77,10 @@ function ScratchCard({ onReveal, revealed }: { onReveal: () => void; revealed: b
     ctx.lineCap = 'round';
   }, []);
 
+  useLayoutEffect(() => {
+    if (revealed && focusOnReveal) result.current?.focus({ preventScroll: true });
+  }, [revealed, focusOnReveal]);
+
   function scratch(event: PointerEvent<HTMLCanvasElement>) {
     const surface = event.currentTarget;
     const ctx = surface.getContext('2d');
@@ -86,11 +112,12 @@ function ScratchCard({ onReveal, revealed }: { onReveal: () => void; revealed: b
 
   const date = config.wedding.date;
   return <div className={'scratch-card' + (revealed ? ' is-revealed' : '')}>
-    <div className="scratch-result" aria-hidden={!revealed}>
+    <div className="scratch-result" ref={result} role="group" tabIndex={-1} aria-hidden={!revealed}
+      aria-label={dateLabel(date)} aria-describedby={time ? 'revealed-wedding-time' : undefined}>
       <Motif />
       <span className="kicker">{dateLabel(date, { day: undefined, month: undefined, year: undefined })}</span>
       <strong>{dateLabel(date, { weekday: undefined })}</strong>
-      {config.wedding.startTime && <span>{timeLabel(config.wedding.startTime)} · {config.wedding.timezone}</span>}
+      {time && <span id="revealed-wedding-time">{time}</span>}
     </div>
     {!revealed && <canvas ref={canvas} width={width} height={height} aria-hidden="true"
       onPointerDown={(event) => {
@@ -108,11 +135,15 @@ function ScratchCard({ onReveal, revealed }: { onReveal: () => void; revealed: b
 export function Countdown({ compact = false }: { compact?: boolean }) {
   const { wedding } = config;
   const clock = wedding.countdown.time || wedding.startTime || '00:00';
-  const target = zonedTime(wedding.date, clock, wedding.timezone);
-  const timestamp = target?.getTime() ?? 0;
+  const { timestamp, zone } = useMemo(() => {
+    const target = zonedTime(wedding.date, clock, wedding.timezone);
+    return target
+      ? { timestamp: target.getTime(), zone: timezoneLabel(target, wedding.timezone) }
+      : { timestamp: null, zone: '' };
+  }, [wedding.date, clock, wedding.timezone]);
   const [now, setNow] = useState(Date.now);
   useEffect(() => {
-    if (!wedding.countdown.enabled || !timestamp || Date.now() >= timestamp) return;
+    if (!wedding.countdown.enabled || timestamp === null || Date.now() >= timestamp) return;
     const timer = window.setInterval(() => {
       const time = Date.now();
       setNow(time);
@@ -120,7 +151,7 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
     }, 1000);
     return () => window.clearInterval(timer);
   }, [timestamp, wedding.countdown.enabled]);
-  if (!wedding.countdown.enabled || !timestamp) return null;
+  if (!wedding.countdown.enabled || timestamp === null) return null;
   const remaining = Math.max(0, Math.ceil((timestamp - now) / 1000));
   if (!remaining) return <p className="countdown-ended">{wedding.countdown.expiredText}</p>;
   const parts = [
@@ -128,7 +159,7 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
     [Math.floor(remaining / 60) % 60, 'Minutes'], [remaining % 60, 'Seconds'],
   ] as const;
   return <div className={'countdown' + (compact ? ' compact' : '')}>
-    <p className="kicker">{wedding.countdown.time || wedding.startTime ? 'The celebration begins in' : 'Until the wedding day in India'}</p>
+    <p className="kicker">{wedding.countdown.time || wedding.startTime ? 'The celebration begins in' : 'Until the wedding day · ' + zone}</p>
     <div className="countdown-grid" role="timer" aria-live="off">
       {parts.map(([value, label]) => <div key={label}><strong>{String(value).padStart(2, '0')}</strong><span>{label}</span></div>)}
     </div>
@@ -137,7 +168,10 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
 
 export function DateReveal({ motion, revealed, setRevealed }: { motion: boolean; revealed: boolean; setRevealed: () => void }) {
   const stage = useRef<HTMLDivElement>(null);
+  const [focusOnReveal, setFocusOnReveal] = useState(false);
+  const time = revealTimeLabel();
   const calendarUrl = googleCalendar();
+  const reminderCount = calendarUrl ? calendarReminderCount() : 0;
   useLayoutEffect(() => {
     if (!motion || !revealed || !stage.current) return;
     const context = gsap.context(() => {
@@ -156,22 +190,31 @@ export function DateReveal({ motion, revealed, setRevealed }: { motion: boolean;
     <div className="date-ornament date-ornament-left" aria-hidden="true"><Motif /></div>
     <div className="date-ornament date-ornament-right" aria-hidden="true"><Motif /></div>
     <SectionTitle label="01 · THE WEDDING DAY" title="Save the date"
-      description={config.wedding.date ? 'Scratch the gilded card to uncover the day.' : 'The date will be shared here when it is confirmed.'} />
+      description={revealed ? 'Join us for the wedding celebrations.'
+        : config.wedding.date ? 'Scratch the gilded card to uncover the day.' : 'The date will be shared here when it is confirmed.'} />
+    <p className="sr-only" role="status">
+      {revealed && !focusOnReveal && ('Wedding date revealed. ' + dateLabel(config.wedding.date) + '.' + (time ? ' ' + time + '.' : ''))}
+    </p>
     {config.wedding.date && <div className="date-stage" ref={stage}>
-      <ScratchCard onReveal={setRevealed} revealed={revealed} />
+      <ScratchCard onReveal={setRevealed} revealed={revealed} focusOnReveal={focusOnReveal} time={time} />
       <div className="date-burst" aria-hidden="true">{revealed && motion && Array.from({ length: 16 }, (_, index) => <i key={index}/>)}</div>
-      {!revealed && <button type="button" className="button button-wine reveal-button" onClick={setRevealed}>
+      {!revealed && <button type="button" className="button button-wine reveal-button" onClick={(event) => {
+        if (event.detail === 0) setFocusOnReveal(true);
+        setRevealed();
+      }}>
         <Sparkles size={16} /> Reveal Wedding Date
       </button>}
       {revealed && <div className="date-details">
-        <p className="sr-only" role="status">Wedding date revealed. {dateLabel(config.wedding.date)}.</p>
         <Countdown />
         {calendarUrl && <>
           <div className="action-row">
             <a className="button button-wine" href={calendarUrl} target="_blank" rel="noreferrer"><CalendarDays size={17} /> Add to Google Calendar</a>
             <button className="button button-outline" type="button" onClick={downloadCalendar}><Download size={16} /> Download .ics</button>
           </div>
-          <p className="calendar-note">The .ics file includes both reminders. Check your calendar’s alerts after importing.</p>
+          <p className="calendar-note">
+            Set alerts manually when adding the event directly in Google Calendar.
+            {reminderCount > 0 && (' The .ics file includes ' + reminderCount + (reminderCount === 1 ? ' reminder.' : ' reminders.') + ' Check your alerts after importing.')}
+          </p>
         </>}
       </div>}
     </div>}

@@ -30,7 +30,7 @@
   "story": {
     "title": "Two names. One beginning.",
     "text": "",
-    "intro": "Known to those closest to them as Chandini and Manu, Sanghamitra and Ananta invite you to share the first page of their married life.",
+    "intro": "Known to those closest to them as {brideNickname} and {groomNickname}, {bride} and {groom} invite you to share the first page of their married life.",
     "albumTitle": "The wedding album",
     "illustrationNote": "Illustrated wedding keepsakes",
     "illustrations": [
@@ -86,6 +86,14 @@
     "thanks": "With love and gratitude",
     "compliments": "With best compliments from the Sahoo family, friends and relatives."
   },
-  "branding": { "advertisementImage": "", "advertisementAlt": "", "portfolioUrl": "", "instagramUrl": "" }
+  "branding": {
+    "heading": "Invitation design",
+    "designerName": "Soumya Ranjan Parida",
+    "message": "Loved this invitation? I’d love to hear from you.",
+    "advertisementImage": "",
+    "advertisementAlt": "",
+    "portfolioUrl": "https://soumya-rn-parida.vercel.app/",
+    "instagramUrl": "https://www.instagram.com/soumya_rn_/"
+  }
 }
 
