@@ -1,7 +1,8 @@
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState, type PointerEvent } from 'react';
 import { CalendarDays, Download, Sparkles } from 'lucide-react';
 import gsap from 'gsap';
 import { config } from '../config/wedding';
+import { DateConfetti } from '../components/DateConfetti';
 import { SectionTitle, Motif } from '../components/ornaments';
 import { dateLabel, timeLabel, zonedTime } from '../utils/dates';
 import { calendarReminderCount, downloadCalendar, googleCalendar } from '../utils/calendar';
@@ -169,18 +170,24 @@ export function Countdown({ compact = false }: { compact?: boolean }) {
 export function DateReveal({ motion, revealed, setRevealed }: { motion: boolean; revealed: boolean; setRevealed: () => void }) {
   const stage = useRef<HTMLDivElement>(null);
   const [focusOnReveal, setFocusOnReveal] = useState(false);
+  const [celebrating, setCelebrating] = useState(false);
+  const endCelebration = useCallback(() => setCelebrating(false), []);
   const time = revealTimeLabel();
   const calendarUrl = googleCalendar();
   const reminderCount = calendarUrl ? calendarReminderCount() : 0;
+  useEffect(() => {
+    if (!motion) endCelebration();
+  }, [motion, endCelebration]);
+
+  function reveal() {
+    if (motion) setCelebrating(true);
+    setRevealed();
+  }
+
   useLayoutEffect(() => {
     if (!motion || !revealed || !stage.current) return;
     const context = gsap.context(() => {
       gsap.from('.scratch-result > *', { y: 13, opacity: 0, duration: 0.56, stagger: 0.1 });
-      gsap.fromTo('.date-burst i', { x: 0, y: 0, opacity: 1 }, {
-        x: (index) => (index < 8 ? 1 : -1) * (35 + (index % 8) * 21),
-        y: (index) => -115 + (index % 8) * 28, rotate: 360, opacity: 0,
-        duration: 1.2, ease: 'power2.out', stagger: 0.02,
-      });
       gsap.from('.date-details', { opacity: 0, y: 15, duration: 0.6 });
     }, stage);
     return () => context.revert();
@@ -196,11 +203,11 @@ export function DateReveal({ motion, revealed, setRevealed }: { motion: boolean;
       {revealed && !focusOnReveal && ('Wedding date revealed. ' + dateLabel(config.wedding.date) + '.' + (time ? ' ' + time + '.' : ''))}
     </p>
     {config.wedding.date && <div className="date-stage" ref={stage}>
-      <ScratchCard onReveal={setRevealed} revealed={revealed} focusOnReveal={focusOnReveal} time={time} />
-      <div className="date-burst" aria-hidden="true">{revealed && motion && Array.from({ length: 16 }, (_, index) => <i key={index}/>)}</div>
+      <ScratchCard onReveal={reveal} revealed={revealed} focusOnReveal={focusOnReveal} time={time} />
+      {celebrating && motion && <DateConfetti onComplete={endCelebration} />}
       {!revealed && <button type="button" className="button button-wine reveal-button" onClick={(event) => {
         if (event.detail === 0) setFocusOnReveal(true);
-        setRevealed();
+        reveal();
       }}>
         <Sparkles size={16} /> Reveal Wedding Date
       </button>}
