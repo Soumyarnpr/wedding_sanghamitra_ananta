@@ -13,6 +13,12 @@ npm run dev
 
 Open the local address printed by Vite. Run `npm run check` for type checking and `npm run build` to produce the static app in `dist`. Serve that directory from a static web host. The Sites manifest also points to `dist`.
 
+## Deploy to Vercel
+
+Import the Git repository into Vercel using the directory containing `package.json` as the project root. [`vercel.json`](vercel.json) selects the Vite preset, runs `npm run build`, and serves `dist`. The invitation builds without environment variables. [Vercel build settings](https://vercel.com/docs/builds/configure-a-build)
+
+To deploy from your local checkout with the Vercel CLI, run `vercel --prod` from the project root. [Vercel CLI deployment guide](https://vercel.com/docs/cli/deploy)
+
 ## Edit the invitation
 
 Use [`src/config/wedding.config.json`](src/config/wedding.config.json) for names, invitation copy, dates, ceremony details, links, media, and theme settings. Run a new build after changing it.
